@@ -39,11 +39,16 @@
 ##' connected point-to-point.  Thus a maximum in a slice may not correspond to 
 ##' a peak in the contour plot.
 ##' 
-##' @section Browsers: The browser is called by \code{\link[utils]{browseURL}}, which
+##' @section Browser Choice: The browser is called by
+##' \code{\link[utils]{browseURL}}, which
 ##' in turn uses \code{options("browser")}.  Exactly how this is handled
 ##' is OS dependent.
 ##'
-##' @section Browsers/Mac: On a Mac, the default browser is called by \code{/bin/sh/open}
+##' @section RStudio Viewer: If browser is \code{NULL}, you are using RStudio, and a viewer is specified, this will be called.  You can stop this by with \code{options(viewer = NULL)}.
+##'
+##'
+##' @section Browser Choice/Mac: On a Mac, the default browser is called
+##' by \code{/bin/sh/open}
 ##' which in turn looks at which browser you have set in the system settings.  You can
 ##' override your default with
 ##' \code{browser = "/usr/bin/open -a 'Google Chrome'"} for example.
@@ -52,21 +57,27 @@
 ##' doesn't look quite right, it works correctly (the guides determine which
 ##' slice is displayed).
 ##'
-##' @section Browsers/Other Systems:  \code{exCon} has been tested on a Windows 7
+##' @section Browser Choice/Other Systems:  \code{exCon} has been tested
+##' on a Windows 7
 ##' professional instance running in VirtualBox using Firefox and Chrome, and
 ##' runs correctly (Firefox has the same mouse position issue as mentioned above).
+##'
+##' @section Browser Choice & Performance:  You can check the performance of
+##' your browser at peacekeeper.futuremark.com  The most relevant score for
+##' exCon is the rendering category.  In limited testing, Chrome does the best.
 ##'
 ##' @section Performance Limits (YMMV): On a 4-year old MacBook Pro, with 8 Gb
 ##' RAM and an Intel Core i7 chip, a
 ##' 4000 x 4000 matrix with 5 contour levels 
 ##' requires about 30 seconds for R to create the contours.  The web page displayed
 ##' by
-##' Chrome appears to be about 85 Mb in size and the guide movements lag the mouse
+##' Chrome 38 appears to be about 85 Mb in size and the guide movements lag the mouse
 ##' movements quite a bit, but it is still usable.  Sometimes the page won't load.
-##' The files on disk are about 159 Mb. Firefox will load the 4K x 4K
+##' The files on disk are about 159 Mb. Firefox 32 will load the 4K x 4K
 ##' matrix but performance is too sluggish. On the same computer, a
 ##' 5000 x 5000 matrix with 5 contour levels 
-##'	causes Chrome to crash.
+##'	causes Chrome to crash.  Testing on a newer Mac with 16 Gb RAMM shows that
+##' the browser may be the limiting factor rather than the RAMM.
 ##' 
 ##' 
 ##' @name exCon
@@ -140,35 +151,46 @@ exCon <- function(M = NULL,
 
 	# Get the JavaScript modules & related files
 	
-	cd <- getwd()
+	# td <- tempfile("viewhtml")
+	# dir.create(td)
 	td <- tempdir()
 	fd <- system.file("extdata", package = "exCon")
 	eCfiles <- c("eC.css", "eC_globals.js", "eC_controls.js", "eC_contours.js",
 	"eC_brushNguides.js", "eC_slices.js", "eC_main.js", "exCon.html")	
-	chk2 <- file.copy(paste(fd, eCfiles, sep = "/"), paste(td, eCfiles, sep = "/"))
-	if (!all(chk2)) stop("Set up of temporary directory failed")
-	setwd(td)
+	chk2 <- file.copy(from=file.path(fd, eCfiles), to=file.path(td, eCfiles),
+		overwrite = TRUE)
+	if (!all(chk2)) stop("Copying to temporary directory failed")
 
-	js1 <- readLines(con = "eC_globals.js")
-	js2 <- readLines(con = "eC_controls.js")
-	js3 <- readLines(con = "eC_contours.js")
-	js4 <- readLines(con = "eC_brushNguides.js")
-	js5 <- readLines(con = "eC_slices.js")
-	js6 <- readLines(con = "eC_main.js")
+	js1 <- readLines(con = file.path(td,"eC_globals.js"))
+	js2 <- readLines(con = file.path(td,"eC_controls.js"))
+	js3 <- readLines(con = file.path(td,"eC_contours.js"))
+	js4 <- readLines(con = file.path(td,"eC_brushNguides.js"))
+	js5 <- readLines(con = file.path(td,"eC_slices.js"))
+	js6 <- readLines(con = file.path(td,"eC_main.js"))
 
 	# Now write
 	
 	writeLines(text = c(data1, data2, data3, data4,
 		js1, js2, js3, js4, js5, js6),
-		sep  = "\n", con = "exCon.js")
+		sep  = "\n", con = file.path(td,"exCon.js"))
 
 	# Open the file in a browser
 
-	pg <- "exCon.html"
-	if (!is.null(browser)) browseURL(pg, browser = browser)
-	if (is.null(browser)) browseURL(pg)
+	pg <-  file.path(td,"exCon.html")
+	if (!is.null(browser)) {
+	    browseURL(pg, browser = browser)
+		} else {
+		# open in RStudio if viewer is not null
+	    # similar to htmltools::html_print
+			viewer <- getOption("viewer")
+		  	if (is.null(browser) && !is.null(viewer)) {
+	      		viewer(pg)
+		  		} else {
+		    		browseURL(pg)
+		  			}
+		}
+  
 	message("The exCon web page is in the following temp directory which is deleted when you quit R: ")
 	message(td)
-	setwd(cd)
 	invisible()
 }
