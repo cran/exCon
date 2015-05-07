@@ -6,10 +6,12 @@
 ##' @param M A matrix.
 ##'
 ##' @param x A vector of numeric values giving the locations of the grid defining
-##' the matrix.  Must have length \code{nrow(M)}.
+##' the matrix.  Must have length \code{nrow(M)}.  These values become the scale
+##' along the x axis.
 ##'
 ##' @param y A vector of numeric values giving the locations of the grid defining
-##' the matrix.  Must have length \code{ncol(M)}.
+##' the matrix.  Must have length \code{ncol(M)}. These values become the scale
+##' along the y axis.
 ##'
 ##' @param nlevels  Integer.  The number of contour levels desired.  Ignored if \code{levels}
 ##' is given.
@@ -20,6 +22,9 @@
 ##' @param browser Character.  Something that will make sense to your OS.  Only
 ##' necessary if you want to overide your system specified browser as understood by
 ##' \code{R}.  See below for further details.
+##'
+##' @param minify Logical.  Shall the JavaScript be minified?  This improves
+##' performance
 ##'
 ##' @return None; side effect is an interactive web page.  The temporary directory
 ##' containing the files that drive the web page is written to the console in case
@@ -47,7 +52,7 @@
 ##' @section RStudio Viewer: If browser is \code{NULL}, you are using RStudio, and a viewer is specified, this will be called.  You can stop this by with \code{options(viewer = NULL)}.
 ##'
 ##'
-##' @section Browser Choice/Mac: On a Mac, the default browser is called
+##' @section Browser Choice (Mac): On a Mac, the default browser is called
 ##' by \code{/bin/sh/open}
 ##' which in turn looks at which browser you have set in the system settings.  You can
 ##' override your default with
@@ -57,7 +62,7 @@
 ##' doesn't look quite right, it works correctly (the guides determine which
 ##' slice is displayed).
 ##'
-##' @section Browser Choice/Other Systems:  \code{exCon} has been tested
+##' @section Browser Choice (Other Systems):  \code{exCon} has been tested
 ##' on a Windows 7
 ##' professional instance running in VirtualBox using Firefox and Chrome, and
 ##' runs correctly (Firefox has the same mouse position issue as mentioned above).
@@ -76,8 +81,8 @@
 ##' The files on disk are about 159 Mb. Firefox 32 will load the 4K x 4K
 ##' matrix but performance is too sluggish. On the same computer, a
 ##' 5000 x 5000 matrix with 5 contour levels 
-##'	causes Chrome to crash.  Testing on a newer Mac with 16 Gb RAMM shows that
-##' the browser may be the limiting factor rather than the RAMM.
+##'	causes Chrome to crash.  Testing on a newer Mac with 16 Gb RAM shows that
+##' the browser may be the limiting factor rather than the RAM.
 ##' 
 ##' 
 ##' @name exCon
@@ -90,12 +95,20 @@
 ##' require(jsonlite)
 ##' exCon(M = volcano)
 ##'
+##' # This next example will label the axes with the actual values, relative to the
+##' # lower left corner (original data collected on 10 meter grid).  Giving
+##' # x and y affects only the scale, and the native values displayed at the top.
+##' 
+##'  exCon(M = volcano,
+##'  x = seq(from = 0, by = 10, length.out = nrow(volcano)),
+##'  y = seq(from = 0, by = 10, length.out = ncol(volcano)))
+##' 
 exCon <- function(M = NULL,
 	x = seq(0, 1, length.out = nrow(M)),
 	y = seq(0, 1, length.out = ncol(M)),
 	nlevels = 5,
 	levels = pretty(range(M, na.rm = TRUE), nlevels),
-	browser = NULL) {
+	browser = NULL, minify = TRUE) {
 
 	# Bryan A. Hanson, DePauw University, April 2014
 	# This is the R front end controlling everything
@@ -151,8 +164,6 @@ exCon <- function(M = NULL,
 
 	# Get the JavaScript modules & related files
 	
-	# td <- tempfile("viewhtml")
-	# dir.create(td)
 	td <- tempdir()
 	fd <- system.file("extdata", package = "exCon")
 	eCfiles <- c("eC.css", "eC_globals.js", "eC_controls.js", "eC_contours.js",
@@ -168,11 +179,27 @@ exCon <- function(M = NULL,
 	js5 <- readLines(con = file.path(td,"eC_slices.js"))
 	js6 <- readLines(con = file.path(td,"eC_main.js"))
 
+	# scopeFunHeader <- "(function() {"
+	# scopeFunTail <- "})();"
+
 	# Now write
+
+	# text = c(scopeFunHeader, data1, data2, data3, data4,
+		# js1, js2, js3, js4, js5, js6, scopeFunTail)
+
+	text = c(data1, data2, data3, data4,
+		js1, js2, js3, js4, js5, js6)
+
+	if (minify) {
+		if (requireNamespace("js", quietly = TRUE)) {
+			text <- js::uglify_optimize(text, unused = FALSE)
+			}
+		if (!requireNamespace("js", quietly = TRUE)) {
+			stop("You need install package js to minify the JavaScript code")
+			}
+		}
 	
-	writeLines(text = c(data1, data2, data3, data4,
-		js1, js2, js3, js4, js5, js6),
-		sep  = "\n", con = file.path(td,"exCon.js"))
+	writeLines(text, sep  = "\n", con = file.path(td,"exCon.js"))
 
 	# Open the file in a browser
 
