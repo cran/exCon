@@ -1,50 +1,51 @@
 
 NEWS file for package exCon
 
-exCon is an interactive tool to explore topographic-like data
-    sets.  Such data sets take the form of a matrix in which the rows and
-    columns provide location/frequency information, and the matrix elements
-    contain altitude/response information.  Such data is found in cartography,
-    2D spectroscopy and chemometrics.  exCon creates an interactive web page
-    showing the contoured data set along with slices from the original matrix
-    parallel to each dimension. The page is written in d3/javascript.
+Interactive tools to explore topographic-like data sets.  Such data sets take the form of a matrix in which the rows and columns provide location/frequency information, and the matrix elements contain altitude/response information.  Such data is found in cartography, 2D spectroscopy and chemometrics.  The functions in this package create interactive web pages showing the contoured data, possibly with slices from the original matrix parallel to each dimension. The interactive behavior is created using the D3.js JavaScript library by Mike Bostock.
 
 Bryan A. Hanson & Kristina R. Mulry, DePauw University, Greencastle Indiana USA
 
 Contributions much appreciated from:
 timelyportfolio
 
-###### Version: 0.1.5
-Date: 2015-05-07
-News:
->> Improved Rd example and documentation.
+Changes in version: 0.1.9 2015-06-23
+     + Edited description as requested by CRAN.
+     + Updated the link to the D3 library script in the html files.
+     + Scoping function removed from exCon, as it makes the controls unavailable.  Scoping function still wraps exCon2.
+
+Changes in version: 0.1.8 2015-06-22
+     + Changed order of form boxes in web page so that the native coordinates are right-most.
+     + Updated performance data in help page.
+     + Re-activated scoping function feature.
+
+Changes in version: 0.1.7 2015-06-22
+     + Added function exCon2, which does not display the slices.
+     + Examples and documentation now take into account that package js, needed to minify, is not universally available.  Thanks to Prof. Ripley for pointing this out.
+     + Format of NEWS file changed to work better with the news function.
+
+Changes in version: 0.1.6 2015-06-08
+     + Increased size of input boxes at top of page.
+     + Fixed mouse position relative to cross hairs.
+
+Changes in version: 0.1.5 2015-05-07
+     + Improved Rd example and documentation.
  
-###### Version: 0.1-4
-Date: 2015-03-27
-News:
->> Beautified code, added a scoping function, and added an option to minify (which is the default). 
+Changes in version: 0.1-4 2015-03-27
+     + Beautified code, added a scoping function, and added an option to minify (which is the default). 
 
-###### Version: 0.1-3
-Date: 2015-01-12
-News:
->> Fixed an issue with how the temp directory where the page is stored was created.  
+Changes in version: 0.1-3 2015-01-12
+     + Fixed an issue with how the temp directory where the page is stored was created.  
 
-###### Version: 0.1-2
-Date: 2014-11-06
-News:
->> Merged pull request from timelyportofolio permitting the RStudio viewer to be used.  Also better handling of the temporary directory.
->> Merged pull request from timelyportofolio to clear brush in a more standardized way.
->> Updated documentation.
->> Added .gitignore
+Changes in version: 0.1-2 2014-11-06
+     + Merged pull request from timelyportofolio permitting the RStudio viewer to be used.  Also better handling of the temporary directory.
+     + Merged pull request from timelyportofolio to clear brush in a more standardized way.
+     + Updated documentation.
+     + Added .gitignore
 
-###### Version: 0.1-1
-Date: 2014-10-30
-News:
->> Added overwriting to the tempdir so different data sets could be examined
+Changes in version: 0.1-1 2014-10-30
+     + Added overwriting to the tempdir so different data sets could be examined
 in the same R session. 
 
-###### Version: 0.1-0
-Date: 2014-10-29
-News:
->> First Release. 
+Changes in version: 0.1-0 2014-10-29
+     + First Release. 
 
