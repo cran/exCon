@@ -6,13 +6,13 @@
 // xD & yD are global variables
 
 var drawContour = function(xD, yD) { // draw the contour map
-		var xContour = d3.scale.linear() // x limits for contour map
+		var xContour = d3.scaleLinear() // x limits for contour map
 			.domain(xD)
 			.range([0, conWidth]);
-		var yContour = d3.scale.linear() // y limits for contour map
+		var yContour = d3.scaleLinear() // y limits for contour map
 			.domain(yD)
 			.range([conHeight, 0]);
-		var lineCon = d3.svg.line()
+		var lineCon = d3.line()
 			.x(function(d) {
 				return xContour(d.x);
 			})
@@ -20,14 +20,12 @@ var drawContour = function(xD, yD) { // draw the contour map
 				return yContour(d.y);
 			});
 		var contour = svg.append("svg")
-			.attr({
-				x: lPad,
-				y: tPad,
-				width: conWidth,
-				height: conHeight,
-				"class": "contour",
-				"id": "CON"
-			})
+			.attr("x", lPad)
+			.attr("y", tPad)
+			.attr("width", conWidth)
+			.attr("height", conHeight)
+			.attr("class", "contour")
+			.attr("id", "CON")
 			.selectAll("path")
 			.data(CL.map(function(d) {
 				return d3.range(d.x.length).map(function(i) {
@@ -48,9 +46,8 @@ var drawContour = function(xD, yD) { // draw the contour map
 
 var drawXaxis = function(xScale) {
 	d3.select("#X_axis").remove(); // remove existing axis
-	var xAxis = d3.svg.axis()
-		.scale(xScale)
-		.orient("bottom");
+	var xAxis = d3.axisBottom()
+		.scale(xScale);
 
 	svg.append("g")
 		.attr("id", "X_axis")
@@ -65,9 +62,8 @@ var drawXaxis = function(xScale) {
 
 var drawYaxis = function(yScale) {
 	d3.select("#Y_axis").remove();
-	var yAxis = d3.svg.axis()
-		.scale(yScale)
-		.orient("right");
+	var yAxis = d3.axisRight()
+		.scale(yScale);
 
 	svg.append("g")
 		.attr("id", "Y_axis")
@@ -84,13 +80,13 @@ var clearContour = function() {
 }
 
 var drawMap = function() { // draw the navigation map in the map space
-		var xMap = d3.scale.linear() // x limits for corner map
+		var xMap = d3.scaleLinear() // x limits for corner map
 			.domain(Dx)
 			.range([0, mapWidth]);
-		var yMap = d3.scale.linear() // y limits for corner map
+		var yMap = d3.scaleLinear() // y limits for corner map
 			.domain(Dy)
 			.range([mapHeight, 0]);
-		var lineMap = d3.svg.line()
+		var lineMap = d3.line()
 			.x(function(d) {
 				return xMap(d.x);
 			})
@@ -98,11 +94,9 @@ var drawMap = function() { // draw the navigation map in the map space
 				return yMap(d.y);
 			});
 		var map = svg.append("svg")
-			.attr({
-				x: lPad + conWidth + gap,
-				y: tPad + conHeight + gap,
-				"class": "map"
-			})
+			.attr("x", lPad + conWidth + gap)
+			.attr("y", tPad + conHeight + gap)
+			.attr("class", "map")
 			.selectAll("path")
 			.data(CL.map(function(d) {
 				return d3.range(d.x.length).map(function(i) {

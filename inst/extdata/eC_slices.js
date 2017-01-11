@@ -37,8 +37,6 @@ var getXsliceXvalues = function() {
 
 		var lIndex = getXsliceLimits()[0];
 		var rIndex = getXsliceLimits()[1];
-		// console.log(lIndex)
-		// console.log(rIndex)
 		var nc = arraySize(M)[1];
 		var xbase = d3.range(1, nc + 1);
 		var xdata = xbase.slice(lIndex, rIndex + 1);
@@ -104,7 +102,7 @@ var drawXslice = function(row) {
 			});
 		}
 
-		var xscl = d3.scale.linear()
+		var xscl = d3.scaleLinear()
 			.domain(d3.extent(xy, function(d) {
 				return d.x;
 			})) //use just the x part
@@ -117,11 +115,11 @@ var drawXslice = function(row) {
 			return d3.max(d);
 		});
 
-		var yscl = d3.scale.linear()
+		var yscl = d3.scaleLinear()
 			.domain([minM, ((maxM - minM) * yF + minM)])
 			.range([xslHeight - 5, 5]) // keeps line from touching outline
 
-		var slice = d3.svg.line()
+		var slice = d3.line()
 			.x(function(d) {
 				return xscl(d.x);
 			}) // apply the x scale to the x data
@@ -142,13 +140,11 @@ var drawXslice = function(row) {
 
 		xSlice.append("path")
 			.attr("transform", "translate(" + lPad + "," + (tPad + conHeight + gap) + ")")
-			.attr({
-				width: xslWidth,
-				height: xslHeight,
-				"class": "line",
-				"class": "xslice",
-				"d": slice(xy)
-			}) // use the return value of slice(xy) as 'd'
+			.attr("width", xslWidth)
+			.attr("height", xslHeight)
+			.attr("class", "line")
+			.attr("class", "xslice")
+			.attr("d", slice(xy))
 
 	} // end of drawXslice
 
@@ -252,18 +248,18 @@ var drawYslice = function(col) {
 			return d3.max(d);
 		});
 
-		var xscl = d3.scale.linear()
+		var xscl = d3.scaleLinear()
 			.domain([minM, ((maxM - minM) * xF + minM)])
 			// range is set so the top of the peaks point toward the contour area
 			.range([yslWidth - 5, 5])
 
-		var yscl = d3.scale.linear()
+		var yscl = d3.scaleLinear()
 			.domain(d3.extent(xy, function(d) {
 				return d.y;
 			}))
 			.range([yslHeight + tPad, tPad])
 
-		var slice = d3.svg.line()
+		var slice = d3.line()
 			.x(function(d) {
 				return xscl(d.x);
 			})
@@ -282,12 +278,10 @@ var drawYslice = function(col) {
 
 		ySlice.append("path")
 			.attr("transform", "translate(" + (lPad + conWidth + gap) + "," + (0) + ")")
-			.attr({
-				width: yslWidth,
-				height: yslHeight,
-				"class": "line",
-				"class": "yslice",
-				"d": slice(xy)
-			})
+			.attr("width", yslWidth)
+			.attr("height", yslHeight)
+			.attr("class", "line")
+			.attr("class", "yslice")
+			.attr("d", slice(xy))
 
 	} // end of drawYslice
