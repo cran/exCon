@@ -1,6 +1,6 @@
-2de05c4a79caf487b84d41546c3e6629 *DESCRIPTION
+f869db8d4b9435753026bb3782aef08a *DESCRIPTION
 36dc6cb0109625fafe3583ecb94b28cf *NAMESPACE
-34d895d0327ec49a23a04705fdad985a *NEWS
+01607cd639472e03e9145a7b4914ed42 *NEWS
 96c378e941e303f28e39e216a46fae11 *R/exCon-package.R
 9fbbf84dec38d8604c5096fa96da8ca6 *R/exCon.R
 fe6601a4f3bc8c22bde2680361a37c58 *inst/extdata/eC.css
@@ -16,5 +16,5 @@ f343fbc6f8d576f4074458ef810dafd4 *inst/extdata/eC_main.js
 c28bcbeb9117fc4f7371112b020ea01d *inst/extdata/eC_slices.js
 b506d1b1f63cdd64302c901e0381ee4e *inst/extdata/exCon.html
 913177d15d8ec70c12ca1848f8aaa30d *inst/extdata/exCon2.html
-f8edcc99b0e38e465477825523e0cd35 *man/exCon-package.Rd
-2cb9fa11fb5875271f9d4c367abbbb9a *man/exCon.Rd
+95c737222eeca11d947949923fc92c2a *man/exCon-package.Rd
+9a296e562bca7f21c6d0e378efcd1c77 *man/exCon.Rd
